@@ -142,4 +142,15 @@ public:
   void drawDigit(int digit) {
     drawDigit(digit, 0, 0);
   }
+
+  void drawNumber(int number, int offsetRow, int offsetCol) {
+     int firstDigit = number / 10;
+     int secondDigit = number % 10;
+     drawDigit(firstDigit, offsetRow, offsetCol);
+     drawDigit(secondDigit, offsetRow, offsetCol + DIGIT_COLS + 1);
+  }
+
+  void drawNumber(int number) {
+     drawNumber(number, 0, 0);
+  }
 };

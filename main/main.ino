@@ -69,6 +69,6 @@ void loop() {
     shouldUpdate = false;
   }
   
-  int number = map(potentiometerValue, 0, 1023, 9, 0);
-  ledMatrix.drawDigit(number, 0, 3);
+  int number = map(potentiometerValue, 0, 1023, 99, 0);
+  ledMatrix.drawNumber(number, 3, 0);
 }
