@@ -2,6 +2,7 @@
 
 #include "ArduinoSTL.h"
 #include "array"
+#include "pinInfo.h"
 
 static constexpr int DIGIT_ROWS = 5;
 static constexpr int DIGIT_COLS = 3;
@@ -74,25 +75,27 @@ private:
 	void setUpLedMatrix() {
 		// set row pins as OUTPUT
 		for (auto pin : this->getRowPins()) {
-			pinMode(pin, OUTPUT);  
+			pin.configure(PinInfo::PinType::_OUTPUT);
 		}
 		
 		// set column pins as OUTPUT
 		for (auto pin : this->getColPins()) {
-			pinMode(pin, OUTPUT);
+			pin.configure(PinInfo::PinType::_OUTPUT);
 		}
 		
 		// turn off all matrix leds
 		this->turnAllOff();
 	}
 
-	inline void write(int pin, int value) {
-		digitalWrite(pin, value);
+	inline void write(PinInfo pin, int value) {
+		pin.write(value);
 	}
 
 public:
-	LedMatrix(std::array<int, _RowSize> rowPins, std::array<int, _ColSize> colPins) : rowPins(rowPins), colPins(colPins) {
-		
+	LedMatrix(const std::array<PinInfo, _RowSize>& rowPins, const std::array<PinInfo, _ColSize>& colPins) 
+		: rowPins(rowPins),
+		  colPins(colPins) {
+		  	
 		this->setUpLedMatrix();
 	}
 	
@@ -124,24 +127,24 @@ public:
 		}
 	}
 
-	const std::array<int, _RowSize>& getRowPins() {
+	const std::array<PinInfo, _RowSize>& getRowPins() {
 		return rowPins;
 	}
 
-	const std::array<int, _ColSize>& getColPins() {
+	const std::array<PinInfo, _ColSize>& getColPins() {
 		return colPins;
 	}
 
 private:
-	std::array<int, _RowSize> rowPins;
-	std::array<int, _ColSize> colPins;
+	std::array<PinInfo, _RowSize> rowPins;
+	std::array<PinInfo, _ColSize> colPins;
 };
 
 
 template<size_t _RowSize, size_t _ColSize>
 class LedMatrixDriver : public LedMatrix<_RowSize, _ColSize> {
 public:
-	LedMatrixDriver(std::array<int, _RowSize> rowPins, std::array<int, _ColSize> colPins) 
+	LedMatrixDriver(const std::array<PinInfo, _RowSize>& rowPins, const std::array<PinInfo, _ColSize>& colPins) 
 		: LedMatrix<_RowSize, _ColSize>(rowPins, colPins) {}
       
 	void drawDigit(int digit, int offsetRow, int offsetCol) {

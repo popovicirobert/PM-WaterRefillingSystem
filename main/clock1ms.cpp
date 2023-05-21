@@ -19,6 +19,7 @@ namespace clock_1ms {
 		OCR1A = 249;
 		TCCR1B |= (1 << WGM12);   // CTC mode
 		TCCR1B |= (1 << CS11);    // 64 prescaler 
+		TCCR1B |= (1 << CS10);
 		
 		TIMSK1 |= (1 << OCIE1A);  // OCR1A compare match interrupt
 		

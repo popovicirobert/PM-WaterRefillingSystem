@@ -1,28 +1,44 @@
 
-#include "ledMatrix.h"
-#include "clock1ms.h"
+#include "config.h"
 
-static constexpr int LED_MATRIX_ROWS = 8;
-static constexpr int LED_MATRIX_COLS = 8;
+constexpr int POTENTIOMETER_PIN = A0;
+int potentiometerValue = 0;
 
-LedMatrixDriver<LED_MATRIX_ROWS, LED_MATRIX_COLS> ledMatrix({30, 35, 22, 33, 29, 23, 28, 25}, {34, 27, 26, 31, 24, 32, 36, 37});
-int potentiometerValue;
+void updatePotentiometer() {
+	potentiometerValue = analogRead(POTENTIOMETER_PIN);
+}
 
-void setup() {
-	// start 1ms high-precision clock
-	clock_1ms::startClock();
-
-	potentiometerValue = analogRead(A0);
+void updateLedMatrix() {
+	displayNumber = map(potentiometerValue, 0, 1023, DISPLAY_RANGE_HIGH, DISPLAY_RANGE_LOW);
+	ledMatrix.drawNumber(displayNumber, DISPLAY_OFFSET_ROW, DISPLAY_OFFSET_COL);
 }
 
 
+void setup() {
+	Serial.begin(9600);
+	
+	setupClock();
+	
+	setupLedMatrix();
+	
+	setupButton();
+	
+	setupWaterPump();
+	
+	setupEventHandler();
+}
+
 void loop() {
 	if (clock_1ms::periodElapsed()) {
-		potentiometerValue = analogRead(A0);
 		
-		// ToDo: check water pump state
+		updatePotentiometer();
+		
+		updateEvents();
+		
+		
+		updateButton();
 	}
+
 	
-	int displayNumber = map(potentiometerValue, 0, 1023, 99, 0);
-	ledMatrix.drawNumber(displayNumber, 3, 0);
+	updateLedMatrix();
 }
