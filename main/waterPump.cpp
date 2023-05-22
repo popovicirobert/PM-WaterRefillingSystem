@@ -11,10 +11,10 @@ void WaterPump::startPump() {
 	if (state == WorkingState::RUNNING) {
 		return;
 	}
-	pinInfo.write(HIGH);
+	pinInfo.write(LOW);
 }
 
 void WaterPump::stopPump() {
-	pinInfo.write(LOW);
+	pinInfo.write(HIGH);
 	state = WorkingState::NOT_RUNNING;
 }

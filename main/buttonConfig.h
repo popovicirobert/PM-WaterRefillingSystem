@@ -4,28 +4,11 @@
 #include "waterPumpConfig.h"
 #include "displayConfig.h"
 #include "eventHandlerConfig.h"
+#include "logger.h"
 
 static constexpr PinInfo BUTTON_PIN_INFO = {&DDRD, &PIND, &PORTD, PD0};
 AbstractCallableButton* button;
-
-void printNumber(long long value) {
-	static char temp[100];
-	memset(temp, 0, sizeof(temp));
-
-	int sz = 0;
-	while (value > 0) {
-		temp[sz++] = value % 10 + '0';	
-		value /= 10;
-	}
-
-	int l = 0, r = sz - 1;
-	while (l < r) {
-		std::swap(temp[l], temp[r]);
-		l++, r--;
-	}
-
-	Serial.println(temp);
-}
+static Logger logger = Logger::getLogger();
 
 void setupButton() {
 	auto buttonCallback = []() {
@@ -38,21 +21,14 @@ void setupButton() {
 		long long currentTime = clock_1ms::getTickCounter();
 		long long expireTime = fillTime + currentTime;
 
-		Serial.print("Current time: ");
-		printNumber(currentTime);
+		logger.debug().append("Current time: ").append(currentTime).commit();
+		logger.debug().append("Fill time: ").append(fillTime).commit();
+		logger.debug().append("Expire time: ").append(expireTime).commit();
 
-		Serial.print("Fill time: ");
-		printNumber(fillTime);
-		
-		Serial.print("Expire time: ");
-		printNumber(expireTime);
-
-		Serial.println("Starting pump...");
-		waterPump.startPump();
+		logger.info().append("Starting pump...").commit();
 
 		auto eventCallback = []() {
-			Serial.print("Stopping pump: ");
-			printNumber(clock_1ms::getTickCounter());
+			logger.info().append("Stopping pump...").append(clock_1ms::getTickCounter()).commit();
 			waterPump.stopPump(); 
 		};
 

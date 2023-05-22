@@ -28,7 +28,7 @@ public:
 	}
 
 private:
-	static constexpr double FLOW_PER_SEC = 35; // 35 ml/s
+	static constexpr double FLOW_PER_SEC = 29; // 29 ml/s
 	static constexpr double FLOW_PER_MILLI = FLOW_PER_SEC / 1000.0f;
 
 	PinInfo pinInfo;

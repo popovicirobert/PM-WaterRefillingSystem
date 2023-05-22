@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ledMatrix.h"
+#include "displayConfig.h"
+#include "potentiometerConfig.h"
 
 static constexpr int LED_MATRIX_ROWS = 8;
 static constexpr int LED_MATRIX_COLS = 8;
@@ -30,4 +32,9 @@ LedMatrixDriver<LED_MATRIX_ROWS, LED_MATRIX_COLS> ledMatrix(ROW_PINS, COL_PINS);
 
 void setupLedMatrix() {
 	// ToDo: add setup if necessary
+}
+
+void updateLedMatrix() {
+	displayNumber = map(potentiometerValue, 0, 1023, DISPLAY_RANGE_HIGH, DISPLAY_RANGE_LOW);
+	ledMatrix.drawNumber(displayNumber, DISPLAY_OFFSET_ROW, DISPLAY_OFFSET_COL);
 }
