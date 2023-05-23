@@ -1,28 +1,15 @@
 #pragma once
 
+#include <Arduino.h>
+#include <cstring>
+
 class Logger {
 private:
-	Logger() {
-		memset(buffer, 0, sizeof(buffer));
-		size = 0;
-	}
+	Logger();
 	
-	void flush() {
-		if (size == 0)
-			return;
-	
-		Serial.print(buffer);
-		
-		size = 0;
-		memset(buffer, 0, sizeof(buffer));
-	}
+	void flush();
 
-	void _append(char ch) {
-		buffer[size++] = ch;
-		if (size == BUFFER_SIZE) {
-			flush();
-		}
-	}
+	void _append(char ch);
 
 public:
 	Logger(const Logger& rhs) = delete;
@@ -48,60 +35,23 @@ public:
 		return append(args...);
 	}
 
-	Logger& append(long long arg) {
-		static constexpr int MAX_DIGITS = 64;
-		char digits[MAX_DIGITS];
-	
-		int len = 0;
-		while (arg > 0) {
-			digits[len++] = arg % 10 + '0';
-			arg /= 10;
-		}
+	Logger& append(long long arg);
 
-		while (len--) {
-			_append(digits[len]);
-		}
-			
-		return *this;
-	}
+	Logger& append(int arg);
 
-	Logger& append(int arg) {
-		return append((long long)arg);
-	}
+	Logger& append(char arg);
 
-	Logger& append(char arg) {
-		_append(arg);
-		return *this;
-	}
+	Logger& append(const char* arg);
 
-	Logger& append(const char* arg) {
-		while (*arg != '\0') {
-			_append(*arg);
-			arg++;
-		}
-		return *this;
-	}
+	void commit();
 
-	void commit() {
-		_append('\n');
-		flush();
-	}
+	Logger& debug();
 
-	Logger& debug() {
-		return append("[DEBUG]: ");
-	}
+	Logger& info();
 
-	Logger& info() {
-		return append("[INFO]: ");
-	}
+	Logger& warn();
 
-	Logger& warn() {
-		return append("[WARN]: ");
-	}
-
-	Logger& error() {
-		return append("[ERROR]: ");
-	}
+	Logger& error();
 
 private:
 	static Logger* logger;
@@ -110,5 +60,3 @@ private:
 	char buffer[BUFFER_SIZE + 1];
 	int size = 0;
 };
-
-Logger* Logger::logger = nullptr;

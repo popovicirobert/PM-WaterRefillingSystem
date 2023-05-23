@@ -2,13 +2,8 @@
 
 #include "eventHandler.h"
 
-EventHandler eventHandler;
+extern EventHandler eventHandler;
 
-void setupEventHandler() {
-	// ToDo: add setup if necessary
-}
+void setupEventHandler();
 
-
-void updateEvents() {
-	eventHandler.checkEvents();
-}
+void updateEvents();

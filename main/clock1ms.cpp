@@ -1,5 +1,7 @@
 #include "clock1ms.h"
 
+static volatile long long tickCounter = 0LL;
+
 ISR(TIMER1_COMPA_vect) {
 	tickCounter++;
 }

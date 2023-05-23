@@ -2,8 +2,6 @@
 
 #include <avr/interrupt.h>
 
-static volatile long long tickCounter = 0LL;
-
 namespace clock_1ms {
 	static long long lastTickCounter = 0LL;
 	
