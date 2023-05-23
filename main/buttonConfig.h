@@ -8,10 +8,11 @@
 
 static constexpr PinInfo BUTTON_PIN_INFO = {&DDRD, &PIND, &PORTD, PD0};
 AbstractCallableButton* button;
-static Logger logger = Logger::getLogger();
 
 void setupButton() {
-	auto buttonCallback = []() {
+	Logger& logger = Logger::getLogger();
+	
+	auto buttonCallback = [&logger]() {
 		if (waterPump.getState() == WaterPump::WorkingState::RUNNING)
 			return;
 		
@@ -24,11 +25,12 @@ void setupButton() {
 		logger.debug().append("Current time: ").append(currentTime).commit();
 		logger.debug().append("Fill time: ").append(fillTime).commit();
 		logger.debug().append("Expire time: ").append(expireTime).commit();
-
+		
 		logger.info().append("Starting pump...").commit();
+		waterPump.startPump();
 
-		auto eventCallback = []() {
-			logger.info().append("Stopping pump...").append(clock_1ms::getTickCounter()).commit();
+		auto eventCallback = [&logger]() {
+			logger.info().append("Stopping pump: ").append(clock_1ms::getTickCounter()).commit();
 			waterPump.stopPump(); 
 		};
 

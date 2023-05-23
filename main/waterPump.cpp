@@ -11,6 +11,7 @@ void WaterPump::startPump() {
 	if (state == WorkingState::RUNNING) {
 		return;
 	}
+	state = WorkingState::RUNNING;
 	pinInfo.write(LOW);
 }
 

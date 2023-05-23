@@ -1,18 +1,13 @@
 #pragma once
 
-#include <type_traits>
-#include <string>
-
-
-
 class Logger {
 private:
 	Logger() {
-		Serial.begin(DEFAULT_BAUD_RATE);
 		memset(buffer, 0, sizeof(buffer));
+		size = 0;
 	}
-
-	inline void flush() {
+	
+	void flush() {
 		if (size == 0)
 			return;
 	
@@ -22,7 +17,7 @@ private:
 		memset(buffer, 0, sizeof(buffer));
 	}
 
-	inline void _append(char ch) {
+	void _append(char ch) {
 		buffer[size++] = ch;
 		if (size == BUFFER_SIZE) {
 			flush();
@@ -30,9 +25,21 @@ private:
 	}
 
 public:
+	Logger(const Logger& rhs) = delete;
+	Logger(Logger&& rhs) = delete;
+	Logger& operator=(const Logger& rhs) = delete;
+	Logger& operator=(Logger&& rhs) = delete;
+
+	static void setup(int baudRate) {
+		if (logger != nullptr)
+			return;
+
+		Serial.begin(baudRate);
+		logger = new Logger();
+	}
+	
 	static Logger& getLogger() {
-		static Logger logger;
-		return logger;
+		return *logger;
 	}
 
 	template<typename T, typename... Args>
@@ -97,9 +104,11 @@ public:
 	}
 
 private:
-	static constexpr int DEFAULT_BAUD_RATE = 9600;
+	static Logger* logger;
 	
 	static constexpr int BUFFER_SIZE = 127;
 	char buffer[BUFFER_SIZE + 1];
 	int size = 0;
 };
+
+Logger* Logger::logger = nullptr;
